@@ -1,53 +1,127 @@
-# log_curl_request
+# LogCurlRequest - Flutter Package
 
-A Dart package to log HTTP requests in cURL format. This is useful for debugging and sharing request details.
+## Introduction
+
+**LogCurlRequest** is a Flutter package designed to streamline the creation of `cURL` commands from your HTTP request details. This package provides developers with a simple and effective way to log HTTP requests as `cURL` commands, facilitating debugging and sharing of API calls.
+
+## Table of Contents
+
+- [Introduction](#introduction)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Example](#example)
+- [Configuration](#configuration)
+- [Dependencies](#dependencies)
+- [Troubleshooting](#troubleshooting)
+- [Contributors](#contributors)
+- [License](#license)
 
 ## Features
 
-- Log HTTP requests in cURL format.
-- Supports various HTTP methods.
-- Easy integration with existing Dart/Flutter projects.
+- Generate `cURL` commands for HTTP requests.
+- Supports adding HTTP headers, body data (JSON or plain text), and query parameters.
+- Optionally logs the generated `cURL` command using Flutter's `debugPrint`.
+- Easy to integrate with existing Flutter projects.
 
 ## Installation
 
-Add the following to your `pubspec.yaml` file:
+To use this package, add the following to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-    log_curl_request: ^1.0.0
+  log_curl_request:
+    path: <path_to_your_package> # Replace with the package path
 ```
 
-Then run:
+Then, run:
 
-```sh
+```bash
 flutter pub get
-```
-
-## Getting started
-
-To start using the package, import it into your Dart code:
-
-```dart
-import 'package:log_curl_request/log_curl_request.dart';
 ```
 
 ## Usage
 
-Here's a simple example of how to use the `log_curl_request` package:
+Import the package into your Dart file:
 
 ```dart
 import 'package:log_curl_request/log_curl_request.dart';
+```
 
+Generate a `cURL` command:
+
+```dart
+String curlCommand = LogCurlRequest.create(
+  "POST",
+  "https://api.example.com/resource",
+  parameters: {"key": "value"},
+  data: {"field": "value"},
+  headers: {"Authorization": "Bearer YOUR_TOKEN"},
+  showDebugPrint: true,
+);
+```
+
+This will generate and optionally log a `cURL` command like:
+
+```bash
+curl -X POST -H "Authorization: Bearer YOUR_TOKEN" --data '{"field":"value"}' "https://api.example.com/resource?key=value"
+```
+
+## Example
+
+Here’s an example of using the package to log a `cURL` command:
+
+```dart
 void main() {
-    final logger = CurlLogger();
-    logger.log('https://api.example.com/data', method: 'GET');
+  String curlCommand = LogCurlRequest.create(
+    "GET",
+    "https://api.example.com/users",
+    parameters: {"page": "1", "limit": "10"},
+    headers: {"Content-Type": "application/json"},
+    showDebugPrint: true,
+  );
+
+  print(curlCommand);
 }
 ```
 
-## Additional information
+Expected Output (logged via `debugPrint`):
 
-For more information, visit the [package page on pub.dev](https://pub.dev/packages/log_curl_request).
+```bash
+cURL command: 
+curl -X GET -H "Content-Type: application/json" "https://api.example.com/users?page=1&limit=10"
+```
 
-For information about how to write a good package README, see the guide for [writing package pages](https://dart.dev/tools/pub/writing-package-pages).
+## Configuration
 
-For general information about developing packages, see the Dart guide for [creating packages](https://dart.dev/guides/libraries/create-packages) and the Flutter guide for [developing packages and plugins](https://flutter.dev/to/develop-packages).
+### Parameters
+
+- **method**: The HTTP method (e.g., `GET`, `POST`).
+- **path**: The API endpoint.
+- **parameters**: (Optional) Query parameters as a `Map<String, dynamic>`.
+- **data**: (Optional) The request body (supports `Map` or `String`).
+- **headers**: (Optional) HTTP headers as a `Map<String, dynamic>`.
+- **showDebugPrint**: (Optional) A boolean to enable logging of the generated `cURL` command.
+
+## Dependencies
+
+- `dart:convert`
+- `package:flutter/foundation.dart`
+
+Ensure you have Flutter SDK installed and set up in your development environment.
+
+## Troubleshooting
+
+- **Issue**: `cURL` command not logging.
+  - **Solution**: Ensure `showDebugPrint` is set to `true`.
+  
+- **Issue**: Malformed `cURL` command.
+  - **Solution**: Verify the data format and parameter types passed to the method.
+
+## Contributors
+
+This package was authored by [Your Name/Team]. Contributions are welcome. Please submit issues and pull requests on the GitHub repository.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE). See the LICENSE file for details.
