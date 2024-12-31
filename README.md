@@ -1,39 +1,53 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# log_curl_request
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+A Dart package to log HTTP requests in cURL format. This is useful for debugging and sharing request details.
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+- Log HTTP requests in cURL format.
+- Supports various HTTP methods.
+- Easy integration with existing Dart/Flutter projects.
+
+## Installation
+
+Add the following to your `pubspec.yaml` file:
+
+```yaml
+dependencies:
+    log_curl_request: ^1.0.0
+```
+
+Then run:
+
+```sh
+flutter pub get
+```
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+To start using the package, import it into your Dart code:
+
+```dart
+import 'package:log_curl_request/log_curl_request.dart';
+```
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+Here's a simple example of how to use the `log_curl_request` package:
 
 ```dart
-const like = 'sample';
+import 'package:log_curl_request/log_curl_request.dart';
+
+void main() {
+    final logger = CurlLogger();
+    logger.log('https://api.example.com/data', method: 'GET');
+}
 ```
 
 ## Additional information
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+For more information, visit the [package page on pub.dev](https://pub.dev/packages/log_curl_request).
+
+For information about how to write a good package README, see the guide for [writing package pages](https://dart.dev/tools/pub/writing-package-pages).
+
+For general information about developing packages, see the Dart guide for [creating packages](https://dart.dev/guides/libraries/create-packages) and the Flutter guide for [developing packages and plugins](https://flutter.dev/to/develop-packages).
