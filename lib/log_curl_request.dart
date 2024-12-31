@@ -29,8 +29,9 @@ class LogCurlRequest {
     }
 
     // Add URL with parameters
-    if (parameters != null && parameters.isNotEmpty) {
-      final queryString = Uri(queryParameters: parameters).query;
+   if (parameters != null && parameters.isNotEmpty) {
+      final stringifiedParameters = parameters.map((key, value) => MapEntry(key, value.toString()));
+      final queryString = Uri(queryParameters: stringifiedParameters).query;
       buffer.write(' "$path?$queryString"');
     } else {
       buffer.write(' "$path"');
