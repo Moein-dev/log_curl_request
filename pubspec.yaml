@@ -1,6 +1,6 @@
 name: log_curl_request
 description: "A Flutter package to log HTTP requests in cURL format for debugging and testing purposes."
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/Moein-dev/log_curl_request
 
 environment:

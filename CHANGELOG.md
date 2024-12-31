@@ -15,3 +15,9 @@
 ## Fixed
 
 - Fixed a bug where certain requests were not being logged.
+
+# 0.0.3
+
+## Updated
+
+- fix readme file details

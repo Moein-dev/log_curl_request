@@ -30,8 +30,7 @@ To use this package, add the following to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  log_curl_request:
-    path: <path_to_your_package> # Replace with the package path
+  log_curl_request: ^0.0.3
 ```
 
 Then, run:
