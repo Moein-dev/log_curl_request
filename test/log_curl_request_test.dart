@@ -20,7 +20,8 @@ void main() {
       showDebugPrint: showDebugPrint,
     );
 
-    final expected = 'curl -X $method -H "Content-Type: application/json" --data \'{"title":"foo","body":"bar","userId":1}\' "$path?userId=1"';
+    final expected =
+        'curl -X $method -H "Content-Type: application/json" --data \'{"title":"foo","body":"bar","userId":1}\' "$path?userId=1"';
     expect(result, expected);
   });
 }
