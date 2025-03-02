@@ -1,46 +1,52 @@
 # Changelog
 
+## 0.1.0
+
+### New Features
+- Added support for file uploads via multipart form data
+- Added cookie handling with the `cookies` parameter
+- Added additional cURL options via the `CurlOptions` class
+- Added option to mask sensitive information like auth tokens with `maskSensitiveInfo`
+- Added formatted output option with line breaks for better readability
+- Added integrations with popular HTTP client libraries (Dio, http)
+- Added global configuration system with `LogCurlConfig` class
+- Added custom logging functionality with `loggerFunction`
+- Added robust input validation and error handling
+- Added `copyWith` method to `CurlOptions` for easier modification
+
+### Improvements
+- Improved code documentation and API reference
+- Enhanced test coverage with more test cases
+- Updated example app with showcase of all features including error handling
+- Added error display in example app
+- Relaxed SDK constraints to support more Flutter versions (>=3.0.0)
+- Improved formatting of generated cURL commands
+- Added parameter validation to prevent runtime errors
+- Improved interceptors for real HTTP client integration
+
 ## 0.0.5
 
-- **Fixed**:
-- Resolved an error where non-string parameter values caused URL formatting issues.  
-- Fixed data formatting for `Map` types in the `--data` section to prevent JSON encoding failures.  
-
-- **Improved**:
-- Optimized `queryString` generation logic for URL parameters.  
-- Added basic validation for `method` and `path` to ensure they are non-empty.  
-
-- **Documentation**:
-- Updated `README.md` with clearer usage examples.  
-- Enhanced Dartdoc comments for the `create` method parameters to improve API clarity.  
-
----
+- Updated minimum Flutter SDK version to 3.6.0.
+- Updated Flutter Lints to 5.0.0.
+- Added platforms field to pubspec.yaml.
 
 ## 0.0.4
 
-- **Fixed**:
-- Fixed a bug where parameters were not correctly appended to the URL.  
-
----
+- Updated minimum Flutter SDK version to 3.0.0.
+- Updated Flutter Lints to 3.0.0.
+- Update project to handle newer Flutter requirements.
 
 ## 0.0.3
 
-- **Documentation**:
-- Fixed typos and formatting issues in the `README.md` file.  
-
----
+- Support for pubspec.yaml platforms.
 
 ## 0.0.2
 
-- **Improved**:
-- Enhanced logging format for better readability.  
-- Updated dependencies to their latest stable versions.  
-
-- **Fixed**:
-- Addressed an issue where some requests were not logged properly.  
-
----
+- Added more comprehensive documentation.
+- Added an example project.
+- Improved README with usage examples.
 
 ## 0.0.1
 
-- Initial release of the `log_curl_request` package.
+- Initial release with basic cURL command generation functionality.
+- Support for HTTP methods, headers, query parameters, and data.
