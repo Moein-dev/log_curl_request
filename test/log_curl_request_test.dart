@@ -170,16 +170,67 @@ void main() {
       );
     });
 
-    // Skip this test since we can't actually instantiate a File in tests without a real file system
-    test('Form data with file upload', () {
-      // This is a mock test that doesn't actually test file upload functionality
-      // since we can't create real files in unit tests
+    test('Form data with non-file values', () {
       final method = 'POST';
       final path = 'https://api.example.com/upload';
-      
-      // Skip the actual test implementation since we can't create real files
-      expect(true, true);
-    }, skip: 'Cannot test file upload without real files');
+      final formData = {
+        'name': 'John Doe',
+        'email': 'john@example.com',
+        'description': 'Test form data',
+      };
+      final showDebugPrint = false;
+
+      final result = LogCurlRequest.create(
+        method,
+        path,
+        formData: formData,
+        showDebugPrint: showDebugPrint,
+      );
+
+      expect(result.contains('-F "name=John Doe"'), true);
+      expect(result.contains('-F "email=john@example.com"'), true);
+      expect(result.contains('-F "description=Test form data"'), true);
+    });
+
+    test('Shell escaping for special characters', () {
+      final method = 'POST';
+      final path = 'https://api.example.com/test';
+      final headers = {
+        'Authorization': 'Bearer "token with quotes"',
+        'Custom-Header': 'value with \$dollar and `backtick`',
+      };
+      final showDebugPrint = false;
+
+      final result = LogCurlRequest.create(
+        method,
+        path,
+        headers: headers,
+        showDebugPrint: showDebugPrint,
+      );
+
+      expect(result.contains('Bearer \\"token with quotes\\"'), true);
+      expect(result.contains('value with \\\$dollar and \\`backtick\\`'), true);
+    });
+
+    test('Cookie values with special characters', () {
+      final method = 'GET';
+      final path = 'https://api.example.com/secure';
+      final cookies = {
+        'session': 'value"with"quotes',
+        'user': 'name with \$pecial chars',
+      };
+      final showDebugPrint = false;
+
+      final result = LogCurlRequest.create(
+        method,
+        path,
+        cookies: cookies,
+        showDebugPrint: showDebugPrint,
+      );
+
+      expect(result.contains('session=value\\"with\\"quotes'), true);
+      expect(result.contains('user=name with \\\$pecial chars'), true);
+    });
   });
 
   group('CurlOptions Tests', () {

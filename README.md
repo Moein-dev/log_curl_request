@@ -42,6 +42,7 @@
 - Global configuration for consistent behavior.
 - Custom logging functionality.
 - Robust input validation and error handling.
+- Shell-safe escaping of special characters to prevent command injection.
 - Optionally log the generated `cURL` command using Flutter's `debugPrint`.
 
 ## Installation
@@ -50,7 +51,7 @@ To use this package, add the following to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  log_curl_request: ^0.1.0
+  log_curl_request: ^0.1.1
 ```
 
 Then, run:
