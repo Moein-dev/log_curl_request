@@ -51,7 +51,7 @@ To use this package, add the following to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  log_curl_request: ^0.1.1
+  log_curl_request: ^1.0.0
 ```
 
 Then, run:
@@ -356,6 +356,7 @@ try {
 ```
 
 Common validation errors:
+
 - Empty method or URL
 - Invalid URL format (missing scheme)
 - Invalid data type (not Map or String)

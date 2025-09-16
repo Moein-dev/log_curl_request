@@ -12,7 +12,7 @@
 /// - Mask sensitive information like auth tokens
 /// - Integration with popular HTTP client libraries
 /// - Global configuration for consistent behavior
-library log_curl_request;
+library;
 
 import 'dart:convert';
 import 'dart:io';

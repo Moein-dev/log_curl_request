@@ -5,9 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.1.1] - 2024-09-16
+## [1.0.0] - 2024-09-16
 
 ### Fixed
+
 - **Library Structure**: Removed problematic `part` declarations and converted to proper library structure with exports
 - **API Documentation**: Added comprehensive documentation for all public members to comply with `public_member_api_docs` lint rule
 - **Security**: Added shell escaping for header values, cookie values, and file paths to prevent command injection
@@ -15,12 +16,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Boolean Logic**: Fixed CurlOptions merging logic to use proper `copyWith` method
 
 ### Added
+
 - Shell escaping utility for safer cURL command generation
 - Comprehensive API documentation with examples
 - Better error messages and warnings in interceptor methods
 - Test coverage for shell escaping and form data handling
 
 ### Changed
+
 - Consolidated interceptor functionality into main library file to avoid circular imports
 - Improved parameter validation with more descriptive error messages
 - Enhanced interceptor methods with defensive programming practices
@@ -28,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0] - Previous Release
 
 ### New Features
+
 - Added support for file uploads via multipart form data
 - Added cookie handling with the `cookies` parameter
 - Added additional cURL options via the `CurlOptions` class
@@ -40,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `copyWith` method to `CurlOptions` for easier modification
 
 ### Improvements
+
 - Improved code documentation and API reference
 - Enhanced test coverage with more test cases
 - Updated example app with showcase of all features including error handling
