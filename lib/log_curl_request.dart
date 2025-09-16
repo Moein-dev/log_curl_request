@@ -202,12 +202,16 @@ class LogCurlRequest {
       final displayValue = _shouldMaskHeader(key, shouldMaskSensitive) 
           ? '********' 
           : value;
-      buffer.write('$newLine-H "$key: $displayValue"');
+      // Escape header values for shell safety
+      final escapedValue = _escapeShellValue(displayValue.toString());
+      buffer.write('$newLine-H "$key: $escapedValue"');
     });
 
     // Add cookies
     if (cookies != null && cookies.isNotEmpty) {
-      final cookieString = cookies.entries.map((e) => '${e.key}=${e.value}').join('; ');
+      final cookieString = cookies.entries
+          .map((e) => '${_escapeShellValue(e.key)}=${_escapeShellValue(e.value)}')
+          .join('; ');
       buffer.write('$newLine-b "$cookieString"');
     }
 
@@ -216,9 +220,13 @@ class LogCurlRequest {
       for (var entry in formData.entries) {
         if (entry.value is File) {
           final file = entry.value as File;
-          buffer.write('$newLine-F "${entry.key}=@${file.path}"');
+          // Escape file paths to handle spaces and special characters
+          final escapedPath = _escapeShellValue(file.path);
+          buffer.write('$newLine-F "${_escapeShellValue(entry.key)}=@$escapedPath"');
         } else {
-          buffer.write('$newLine-F "${entry.key}=${entry.value}"');
+          final escapedKey = _escapeShellValue(entry.key);
+          final escapedValue = _escapeShellValue(entry.value.toString());
+          buffer.write('$newLine-F "$escapedKey=$escapedValue"');
         }
       }
     }
@@ -282,6 +290,24 @@ class LogCurlRequest {
     return LogCurlConfig.instance.sensitiveHeaders
         .contains(key.toLowerCase());
   }
+
+  /// Escapes special characters in shell values to prevent command injection.
+  /// 
+  /// This method handles quotes, backslashes, and other shell metacharacters
+  /// to ensure the generated cURL command is safe to execute.
+  /// 
+  /// Parameters:
+  /// - [value]: The string value to escape
+  /// 
+  /// Returns the escaped string safe for shell execution.
+  static String _escapeShellValue(String value) {
+    // Escape backslashes first, then double quotes
+    return value
+        .replaceAll('\\', '\\\\')
+        .replaceAll('"', '\\"')
+        .replaceAll('\$', '\\\$')
+        .replaceAll('`', '\\`');
+  }
 }
 
 /// A utility class to integrate with common HTTP client libraries.
@@ -327,16 +353,60 @@ class LogCurlInterceptor {
     bool? formatOutput,
     CurlOptions? curlOptions,
   }) {
-    if (options == null) return '';
+    if (options == null) {
+      debugPrint('Warning: Dio options is null, cannot create cURL command');
+      return '';
+    }
     
     try {
-      // Note: This implementation assumes you have dio package
-      // and the options object is of type RequestOptions
-      final method = options.method?.toString().toUpperCase() ?? 'GET';
-      final path = options.uri?.toString() ?? options.path?.toString() ?? '';
-      Map<String, dynamic>? headers = options.headers;
-      dynamic data = options.data;
-      Map<String, dynamic>? queryParameters = options.queryParameters;
+      // Safely extract method with fallback
+      String method = 'GET';
+      try {
+        method = options.method?.toString().toUpperCase() ?? 'GET';
+      } catch (e) {
+        debugPrint('Warning: Could not extract method from Dio options, using GET: $e');
+      }
+
+      // Safely extract path with validation
+      String path = '';
+      try {
+        path = options.uri?.toString() ?? options.path?.toString() ?? '';
+        if (path.isEmpty) {
+          throw ArgumentError('Empty URL path in Dio options');
+        }
+      } catch (e) {
+        debugPrint('Error: Could not extract valid URL from Dio options: $e');
+        return 'Error: Invalid URL in Dio request';
+      }
+
+      // Safely extract headers
+      Map<String, dynamic>? headers;
+      try {
+        headers = options.headers is Map ? Map<String, dynamic>.from(options.headers) : null;
+      } catch (e) {
+        debugPrint('Warning: Could not extract headers from Dio options: $e');
+        headers = null;
+      }
+
+      // Safely extract data
+      dynamic data;
+      try {
+        data = options.data;
+      } catch (e) {
+        debugPrint('Warning: Could not extract data from Dio options: $e');
+        data = null;
+      }
+
+      // Safely extract query parameters
+      Map<String, dynamic>? queryParameters;
+      try {
+        queryParameters = options.queryParameters is Map 
+            ? Map<String, dynamic>.from(options.queryParameters) 
+            : null;
+      } catch (e) {
+        debugPrint('Warning: Could not extract query parameters from Dio options: $e');
+        queryParameters = null;
+      }
 
       return LogCurlRequest.create(
         method,
@@ -350,8 +420,9 @@ class LogCurlInterceptor {
         curlOptions: curlOptions,
       );
     } catch (e) {
-      debugPrint('Error creating cURL from Dio request: ${e.toString()}');
-      return 'Error creating cURL from Dio request: ${e.toString()}';
+      final errorMsg = 'Error creating cURL from Dio request: ${e.toString()}';
+      debugPrint(errorMsg);
+      return errorMsg;
     }
   }
 
@@ -389,25 +460,58 @@ class LogCurlInterceptor {
     bool? formatOutput,
     CurlOptions? curlOptions,
   }) {
-    if (request == null) return '';
+    if (request == null) {
+      debugPrint('Warning: HTTP request is null, cannot create cURL command');
+      return '';
+    }
     
     try {
-      // Note: This implementation assumes you have http package
-      // and the request object is of type http.Request
-      final method = request.method.toUpperCase();
-      final path = request.url.toString();
-      Map<String, dynamic> headers = Map<String, dynamic>.from(request.headers);
-      
-      // Get the body data if available
-      dynamic data;
-      if (request.body.isNotEmpty) {
-        try {
-          // Try to parse as JSON
-          data = json.decode(request.body);
-        } catch (e) {
-          // If not JSON, use as string
-          data = request.body;
+      // Safely extract method
+      String method = 'GET';
+      try {
+        method = request.method?.toString().toUpperCase() ?? 'GET';
+      } catch (e) {
+        debugPrint('Warning: Could not extract method from HTTP request, using GET: $e');
+      }
+
+      // Safely extract URL with validation
+      String path = '';
+      try {
+        path = request.url?.toString() ?? '';
+        if (path.isEmpty) {
+          throw ArgumentError('Empty URL in HTTP request');
         }
+      } catch (e) {
+        debugPrint('Error: Could not extract valid URL from HTTP request: $e');
+        return 'Error: Invalid URL in HTTP request';
+      }
+
+      // Safely extract headers
+      Map<String, dynamic> headers = {};
+      try {
+        if (request.headers != null) {
+          headers = Map<String, dynamic>.from(request.headers);
+        }
+      } catch (e) {
+        debugPrint('Warning: Could not extract headers from HTTP request: $e');
+        headers = {};
+      }
+      
+      // Safely extract and parse body data
+      dynamic data;
+      try {
+        if (request.body != null && request.body.isNotEmpty) {
+          try {
+            // Try to parse as JSON
+            data = json.decode(request.body);
+          } catch (jsonError) {
+            // If not JSON, use as string
+            data = request.body;
+          }
+        }
+      } catch (e) {
+        debugPrint('Warning: Could not extract body from HTTP request: $e');
+        data = null;
       }
 
       return LogCurlRequest.create(
@@ -421,8 +525,9 @@ class LogCurlInterceptor {
         curlOptions: curlOptions,
       );
     } catch (e) {
-      debugPrint('Error creating cURL from HTTP request: ${e.toString()}');
-      return 'Error creating cURL from HTTP request: ${e.toString()}';
+      final errorMsg = 'Error creating cURL from HTTP request: ${e.toString()}';
+      debugPrint(errorMsg);
+      return errorMsg;
     }
   }
 }
